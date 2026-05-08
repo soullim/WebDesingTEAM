@@ -439,7 +439,6 @@ html, body {
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn sm teal" onclick="rmFetch(true)"><i class="ti ti-refresh"></i> 새로고침</button>
         <button class="btn sm primary" onclick="dbShowForm('rm-manual')"><i class="ti ti-plus"></i> 수동 추가</button>
-        <button class="btn sm" onclick="dbShowForm('rm-api')"><i class="ti ti-settings"></i> API 설정</button>
       </div>
     </div>
     <div id="rm-area"></div>
@@ -642,12 +641,13 @@ function dbOpenList(){
   const el=document.getElementById('db-openlist');
   if(!projects.length){ el.innerHTML='<div class="empty-msg">등록된 프로젝트가 없어요</div>'; return; }
   el.innerHTML=[...projects].sort((a,b)=>parseD(a.open)-parseD(b.open)).map(p=>{
-    const dd=ddayOf(parseD(p.open));
+    const isTbd = !p.open || p.open==='tbd';
+    const dd = isTbd ? {txt:'미정', cls:'today2'} : ddayOf(parseD(p.open));
     const delay=Math.round((parseD(p.open)-TODAY)/86400000)<0;
     return `<div class="open-item">
       <div style="flex:1;min-width:0;">
         <div><span class="open-name">${p.name}</span>
-          <span style="font-size:14px;color:var(--text3);margin-left:6px;">오픈 ${fmt(parseD(p.open))}</span>
+          <span style="font-size:14px;color:var(--text3);margin-left:6px;">오픈 ${isTbd?'미정':fmt(parseD(p.open))}</span>
           <span class="badge ${delay?'delay':'ontime'}">${delay?'딜레이':'정상'}</span></div>
         ${p.note?`<div class="open-note"><i class="ti ti-notes" style="font-size:14px;"></i> ${p.note}</div>`:''}
         <div class="open-member">담당: ${p.members||'—'}</div>
@@ -669,10 +669,10 @@ function dbTimeline(){
   let mn=new Date(TODAY), mx=new Date(TODAY);
   projects.forEach(p=>{
     [p.design,p.pub,p.dev,p.test].forEach(r=>{
-      const a=parseD(r[0]),b=parseD(r[1]);
-      if(a<mn)mn=new Date(a); if(b>mx)mx=new Date(b);
+      if(!r||!r[0]||r[0]==='none'||r[0]==='tbd') return;
+      try{ const a=parseD(r[0]),b=parseD(r[1]); if(a<mn)mn=new Date(a); if(b>mx)mx=new Date(b); }catch(e){}
     });
-    const od=parseD(p.open); if(od<mn)mn=new Date(od); if(od>mx)mx=new Date(od);
+    if(p.open&&p.open!=='tbd'){try{const od=parseD(p.open);if(od<mn)mn=new Date(od);if(od>mx)mx=new Date(od);}catch(e){}}
   });
   mn.setDate(mn.getDate()-4); mx.setDate(mx.getDate()+8);
   const TOTAL=Math.max(1,Math.round((mx-mn)/86400000));
@@ -699,15 +699,15 @@ function dbTimeline(){
       return `<div class="tl-row">
         <div class="tl-meta">
           <span class="tl-pname">${p.name}<span class="badge ${delay?'delay':'ontime'}" style="margin-left:7px;">${delay?'딜레이':'정상'}</span></span>
-          <span class="tl-dates">엔딩 ${fmt(parseD(p.test[1]))} → 오픈 ${fmt(parseD(p.open))}</span>
+          <span class="tl-dates">${(p.test[0]&&p.test[0]!='none'&&p.test[0]!='tbd')?'엔딩 '+fmt(parseD(p.test[1]))+' → ':''} 오픈 ${(!p.open||p.open==='tbd')?'미정':fmt(parseD(p.open))}</span>
         </div>
         <div class="tl-bar-wrap">
           <div class="tl-bg"></div>
-          <div class="tl-seg seg-d"   style="left:${pct(p.design[0])};width:${wpct(p.design[0],p.design[1])}">디자인</div>
-          <div class="tl-seg seg-p"   style="left:${pct(p.pub[0])};width:${wpct(p.pub[0],p.pub[1])}">퍼블</div>
-          <div class="tl-seg seg-dev" style="left:${pct(p.dev[0])};width:${wpct(p.dev[0],p.dev[1])}">개발</div>
-          <div class="tl-seg seg-t"   style="left:${pct(p.test[0])};width:${wpct(p.test[0],p.test[1])}">테스트</div>
-          <div class="open-marker" style="left:${op}%"><span class="end-lbl">오픈 ${fmt(parseD(p.open))}</span></div>
+          ${(p.design[0]&&p.design[0]!='none'&&p.design[0]!='tbd')?`<div class="tl-seg seg-d" style="left:${pct(p.design[0])};width:${wpct(p.design[0],p.design[1])}">디자인</div>`:''}
+          ${(p.pub[0]&&p.pub[0]!='none'&&p.pub[0]!='tbd')?`<div class="tl-seg seg-p" style="left:${pct(p.pub[0])};width:${wpct(p.pub[0],p.pub[1])}">퍼블</div>`:''}
+          ${(p.dev[0]&&p.dev[0]!='none'&&p.dev[0]!='tbd')?`<div class="tl-seg seg-dev" style="left:${pct(p.dev[0])};width:${wpct(p.dev[0],p.dev[1])}">개발</div>`:''}
+          ${(p.test[0]&&p.test[0]!='none'&&p.test[0]!='tbd')?`<div class="tl-seg seg-t" style="left:${pct(p.test[0])};width:${wpct(p.test[0],p.test[1])}">테스트</div>`:''}
+          ${(!p.open||p.open==='tbd')?'':`<div class="open-marker" style="left:${op}%"><span class="end-lbl">오픈 ${fmt(parseD(p.open))}</span></div>`}
           <div class="today-line" style="left:${todayP}%"><span class="today-tip">오늘</span></div>
         </div>
       </div>`;
@@ -727,20 +727,35 @@ function rmRender(){
   if(!filtered.length){ area.innerHTML=`<div class="rm-toolbar">${tabs}</div><div class="empty-msg">${rmFilter} 상태 일감이 없어요</div>`; return; }
   area.innerHTML=`<div class="rm-toolbar">${tabs}<span style="font-size:14px;color:var(--text2);">${rmFilter} <strong>${filtered.length}</strong>건</span></div>
   <table class="issue-table"><thead><tr>
+    <th style="width:42px;"></th>
     <th style="width:52px;">번호</th><th>제목</th>
-    <th style="width:74px;">상태</th><th style="width:74px;">담당자</th>
-    <th style="width:80px;">시작일</th><th style="width:42px;"></th>
-  </tr></thead><tbody>${filtered.map(i=>`<tr>
+    <th style="width:72px;">담당자</th>
+    <th style="width:82px;">시작일</th>
+    <th style="width:82px;">종료일</th>
+    <th style="width:42px;"></th>
+  </tr></thead><tbody>${filtered.map(i=>{
+    const done=i.status?.name==='완료'||i._done;
+    return`<tr style="${done?'opacity:.5;':'}">
+    <td style="text-align:center;"><input type="checkbox" ${done?'checked':''} onchange="rmToggleDone(${i.id},this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:var(--green);"></td>
     <td style="color:var(--text3);">#${i.id}</td>
-    <td title="${i.subject}">${i.subject}</td>
-    <td><span class="st-badge st-${i.status?.name||'default'}">${i.status?.name||'—'}</span></td>
+    <td title="${i.subject}" style="${done?'text-decoration:line-through;color:var(--text3);':''}">${i.subject}</td>
     <td>${i.assigned_to?.name||'미배정'}</td>
     <td style="color:var(--text3);">${i.start_date||'—'}</td>
+    <td style="color:var(--text3);">${i.due_date||'—'}</td>
     <td><button class="btn sm danger" onclick="rmDel(${i.id})"><i class="ti ti-x"></i></button></td>
-  </tr>`).join('')}</tbody></table>`;
+  </tr>`;}).join('')}</tbody></table>`;
 }
 
 function rmSetFilter(s){ rmFilter=s; rmRender(); }
+function rmToggleDone(id, checked){
+  const i = rmIssues.find(x=>x.id===id);
+  if(i){
+    i._done = checked;
+    if(checked) i.status = {name:'완료'};
+    else if(i._m) i.status = {name:'대기'};
+    lsSave(); rmRender();
+  }
+}
 function rmDel(id){ if(!confirm('이 일감을 목록에서 제거할까요?'))return; rmIssues=rmIssues.filter(x=>x.id!==id); lsSave(); rmRender(); toast('일감을 삭제했어요'); }
 
 async function rmFetch(manual){
@@ -763,20 +778,47 @@ function dbShowForm(mode, id){
   if(mode==='add'||mode==='edit'){
     const p=mode==='edit'?projects.find(x=>x.id===id):{};
     document.getElementById('db-modal-title').textContent=mode==='add'?'프로젝트 추가':'프로젝트 수정';
+    // 단계 상태 헬퍼
+    const stVal = (arr) => arr ? (arr[0]==='tbd'?'tbd': arr[0]==='none'?'none':'scheduled') : 'none';
+    const stS = (arr) => arr?.[0]||t;
+    const stE = (arr) => arr?.[1]||t;
+    const stageRow = (label, sid, st_id, s_id, e_id, arr) => {
+      const cur = stVal(arr);
+      const isS = cur==='scheduled';
+      return \`<div class="form-row">
+        <label class="form-label">\${label}</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <select class="form-input" id="\${st_id}" onchange="stageToggle('\${sid}')" style="width:110px;flex-shrink:0;">
+            <option value="none" \${cur==='none'?'selected':''}>미진행</option>
+            <option value="tbd"  \${cur==='tbd'?'selected':''}>미정</option>
+            <option value="scheduled" \${isS?'selected':''}>일정</option>
+          </select>
+          <div id="\${sid}" style="display:\${isS?'flex':'none'};gap:6px;flex:1;min-width:200px;">
+            <input class="form-input" type="date" id="\${s_id}" value="\${stS(arr)}" style="flex:1;">
+            <span style="line-height:36px;color:var(--text3);flex-shrink:0;">~</span>
+            <input class="form-input" type="date" id="\${e_id}" value="\${stE(arr)}" style="flex:1;">
+          </div>
+        </div>
+      </div>\`;
+    };
     document.getElementById('db-modal-body').innerHTML=`
       <div class="form-row"><label class="form-label">프로젝트명 *</label>
         <input class="form-input" id="f-name" value="${p.name||''}" placeholder="예: 초등 수학 앱 개선"></div>
-      <div class="form-row"><label class="form-label">오픈일 *</label>
-        <input class="form-input" type="date" id="f-open" value="${p.open||t}"></div>
-      <div class="form-section-lbl">단계별 기간 <span style="font-weight:400;color:var(--text3);">(시작 ~ 종료)</span></div>
-      <div class="form-row"><label class="form-label">디자인</label>
-        <div class="form-2col"><input class="form-input" type="date" id="f-ds" value="${p.design?.[0]||t}"><input class="form-input" type="date" id="f-de" value="${p.design?.[1]||t}"></div></div>
-      <div class="form-row"><label class="form-label">퍼블</label>
-        <div class="form-2col"><input class="form-input" type="date" id="f-ps" value="${p.pub?.[0]||t}"><input class="form-input" type="date" id="f-pe" value="${p.pub?.[1]||t}"></div></div>
-      <div class="form-row"><label class="form-label">개발</label>
-        <div class="form-2col"><input class="form-input" type="date" id="f-devs" value="${p.dev?.[0]||t}"><input class="form-input" type="date" id="f-deve" value="${p.dev?.[1]||t}"></div></div>
-      <div class="form-row"><label class="form-label">테스트 <span style="font-weight:400;color:var(--text3);">(종료일 = 엔딩일)</span></label>
-        <div class="form-2col"><input class="form-input" type="date" id="f-ts" value="${p.test?.[0]||t}"><input class="form-input" type="date" id="f-te" value="${p.test?.[1]||t}"></div></div>
+      <div class="form-row"><label class="form-label">오픈일</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select class="form-input" id="f-open-type" onchange="openTypeToggle()" style="width:110px;flex-shrink:0;">
+            <option value="tbd"  ${(!p.open||p.open==='tbd')?'selected':''}>미정</option>
+            <option value="date" ${(p.open&&p.open!=='tbd')?'selected':''}>일정</option>
+          </select>
+          <input class="form-input" type="date" id="f-open" value="${(p.open&&p.open!=='tbd')?p.open:t}"
+            style="flex:1;display:${(p.open&&p.open!=='tbd')?'block':'none'};">
+        </div>
+      </div>
+      <div class="form-section-lbl">단계별 기간</div>
+      ${stageRow('디자인','f-d-wrap','f-d-st','f-ds','f-de', p.design)}
+      ${stageRow('퍼블',  'f-p-wrap','f-p-st','f-ps','f-pe', p.pub)}
+      ${stageRow('개발',  'f-dev-wrap','f-dev-st','f-devs','f-deve', p.dev)}
+      ${stageRow('테스트','f-t-wrap','f-t-st','f-ts','f-te', p.test)}
       <div class="form-section-lbl">추가 정보</div>
       <div class="form-row"><label class="form-label">담당자 <span style="font-weight:400;color:var(--text3);">(쉼표로 구분)</span></label>
         <input class="form-input" id="f-members" value="${p.members||''}" placeholder="예: 김민지, 박준호"></div>
@@ -791,26 +833,10 @@ function dbShowForm(mode, id){
         <input class="form-input" id="f-rsubj" placeholder="예: 메인 배너 디자인 수정"></div>
       <div class="form-row"><label class="form-label">담당자</label>
         <input class="form-input" id="f-rassign" placeholder="예: 김민지"></div>
-      <div class="form-row"><label class="form-label">시작일</label>
-        <input class="form-input" type="date" id="f-rdate" value="${t}"></div>
-      <div class="form-row"><label class="form-label">상태</label>
-        <select class="form-input" id="f-rst"><option>대기</option><option>신규</option><option>진행</option><option>수정완료</option></select></div>`;
-  } else if(mode==='rm-api'){
-    document.getElementById('db-modal-title').textContent='레드마인 API 설정';
-    document.getElementById('db-modal-body').innerHTML=`
-      <div class="rm-tip"><i class="ti ti-info-circle"></i> <strong>사전 준비</strong><br>
-        레드마인 관리 → 설정 → API → "REST 웹 서비스 활성화" 체크<br>
-        내 계정 → 오른쪽 하단 "API 접근 키" 확인 후 아래에 입력해요</div>
-      <div class="form-row"><label class="form-label">서버 주소</label>
-        <input class="form-input" id="f-rmurl" value="${rmCfg.url}"></div>
-      <div class="form-row"><label class="form-label">API Key</label>
-        <input class="form-input" type="password" id="f-rmkey" value="${rmCfg.key}" placeholder="레드마인 프로필 → API 접근 키"></div>
-      <div class="form-row"><label class="form-label">프로젝트 식별자</label>
-        <input class="form-input" id="f-rmproj" value="${rmCfg.proj}"></div>
-      <div class="form-row"><label class="form-label">대기 상태명 <span style="font-weight:400;color:var(--text3);">(콤마 구분)</span></label>
-        <input class="form-input" id="f-rmwait" value="${rmCfg.waitSt}"></div>
-      <div id="rm-test-msg" style="font-size:14px;margin-top:8px;min-height:20px;"></div>
-      <div style="margin-top:10px;"><button class="btn sm teal" onclick="rmTestApi()"><i class="ti ti-plug"></i> 연결 테스트</button></div>`;
+      <div class="form-2col" style="margin-bottom:12px;">
+        <div><label class="form-label">시작일</label><input class="form-input" type="date" id="f-rdate" value="${t}"></div>
+        <div><label class="form-label">종료일</label><input class="form-input" type="date" id="f-rdue" value="${t}"></div>
+      </div>`;
   }
   document.getElementById('db-modal-bg').classList.add('open');
 }
@@ -818,10 +844,25 @@ function dbShowForm(mode, id){
 function dbModalSave(){
   if(modalMode==='add'||modalMode==='edit'){
     const name=document.getElementById('f-name').value.trim();
-    const open=document.getElementById('f-open').value;
-    if(!name||!open){ alert('프로젝트명과 오픈일은 필수예요.'); return; }
-    const g = id => document.getElementById(id)?.value || open;
-    const obj={name,open,design:[g('f-ds'),g('f-de')],pub:[g('f-ps'),g('f-pe')],dev:[g('f-devs'),g('f-deve')],test:[g('f-ts'),g('f-te')],members:document.getElementById('f-members').value,note:document.getElementById('f-note').value};
+    if(!name){ alert('프로젝트명을 입력해주세요.'); return; }
+    const openType=document.getElementById('f-open-type').value;
+    const open = openType==='tbd' ? 'tbd' : document.getElementById('f-open').value;
+    // 단계별 기간 — 상태값에 따라 저장
+    const getStage=(stId,sId,eId)=>{
+      const st=document.getElementById(stId)?.value||'none';
+      if(st==='none') return ['none','none'];
+      if(st==='tbd')  return ['tbd','tbd'];
+      return [document.getElementById(sId)?.value||'', document.getElementById(eId)?.value||''];
+    };
+    const obj={
+      name, open,
+      design:getStage('f-d-st','f-ds','f-de'),
+      pub:   getStage('f-p-st','f-ps','f-pe'),
+      dev:   getStage('f-dev-st','f-devs','f-deve'),
+      test:  getStage('f-t-st','f-ts','f-te'),
+      members:document.getElementById('f-members').value,
+      note:document.getElementById('f-note').value
+    };
     if(modalMode==='add'){ obj.id=nextPid++; projects.push(obj); }
     else{ const i=projects.findIndex(x=>x.id===editId); if(i>=0){obj.id=editId;projects[i]=obj;} }
     toast(modalMode==='add'?'프로젝트를 추가했어요':'프로젝트를 수정했어요');
@@ -829,30 +870,17 @@ function dbModalSave(){
     const subj=document.getElementById('f-rsubj').value.trim();
     if(!subj){ alert('제목을 입력해주세요.'); return; }
     const rid=parseInt(document.getElementById('f-rid').value)||Math.floor(Math.random()*900+1100);
-    rmIssues.unshift({id:rid,subject:subj,status:{name:document.getElementById('f-rst').value},assigned_to:{name:document.getElementById('f-rassign').value||'미배정'},start_date:document.getElementById('f-rdate').value,_m:true});
+    rmIssues.unshift({
+      id:rid, subject:subj,
+      status:{name:'대기'},
+      assigned_to:{name:document.getElementById('f-rassign').value||'미배정'},
+      start_date:document.getElementById('f-rdate').value,
+      due_date:document.getElementById('f-rdue').value,
+      _m:true, _done:false
+    });
     toast('일감을 추가했어요');
-  } else if(modalMode==='rm-api'){
-    rmCfg.url  =document.getElementById('f-rmurl').value.trim().replace(/\/$/,'');
-    rmCfg.key  =document.getElementById('f-rmkey').value.trim();
-    rmCfg.proj =document.getElementById('f-rmproj').value.trim();
-    rmCfg.waitSt=document.getElementById('f-rmwait').value.trim();
-    rmFetched=false; toast('API 설정을 저장했어요');
   }
   lsSave(); dbModalClose(); dbRender();
-  if(modalMode==='rm-api') rmFetch(false);
-}
-
-async function rmTestApi(){
-  const url=document.getElementById('f-rmurl').value.trim().replace(/\/$/,'');
-  const key=document.getElementById('f-rmkey').value.trim();
-  const proj=document.getElementById('f-rmproj').value.trim();
-  const msg=document.getElementById('rm-test-msg');
-  msg.style.color='var(--text3)'; msg.textContent='연결 확인 중...';
-  try{
-    const r=await fetch(`${url}/projects/${proj}/issues.json?key=${key}&limit=1`);
-    if(r.ok){ msg.style.color='var(--green)'; msg.textContent='✓ 연결 성공! 저장 후 일감이 자동으로 불러와져요.'; }
-    else{ msg.style.color='var(--red)'; msg.textContent='✗ '+r.status+' — API Key 또는 프로젝트 ID를 확인해주세요.'; }
-  }catch(e){ msg.style.color='var(--red)'; msg.textContent='✗ 연결 실패. 사내 PC에서 열어야 내부망 접속 가능해요.'; }
 }
 
 function dbDel(id){ if(!confirm('이 프로젝트를 삭제할까요?\n삭제 후 새로고침해도 복원되지 않아요.'))return; projects=projects.filter(x=>x.id!==id); lsSave(); dbRender(); toast('프로젝트를 삭제했어요'); }
@@ -866,15 +894,29 @@ let kwCards=[], kwCurFilter='all';
 
 async function kwLoad(){
   document.getElementById('kw-grid').innerHTML='<div class="kw-loading"><div class="kw-dots"><span></span><span></span><span></span></div><p style="margin-top:14px;">뉴스를 불러오는 중이에요</p></div>';
-  try{
-    const res=await fetch('news.json?t='+Date.now());
-    if(!res.ok) throw 0;
-    const data=await res.json();
-    kwCards=data.articles||[];
-    document.getElementById('kw-update-time').textContent=data.updated?'업데이트 '+data.updated:'';
-  }catch{
-    kwCards=kwSample();
-    document.getElementById('kw-update-time').textContent='샘플 데이터';
+  // 1순위: 같은 레포의 news.json
+  // 2순위: 원본 knowledge-wallet 레포의 news.json (public 전환 시 자동 동기화)
+  const KW_SOURCES = [
+    'news.json?t='+Date.now(),
+    'https://soullim.github.io/knowledge-wallet/news.json?t='+Date.now()
+  ];
+  let loaded = false;
+  for(const src of KW_SOURCES){
+    try{
+      const res = await fetch(src);
+      if(!res.ok) continue;
+      const data = await res.json();
+      if((data.articles||[]).length > 0){
+        kwCards = data.articles;
+        document.getElementById('kw-update-time').textContent = data.updated ? '업데이트 ' + data.updated : '';
+        loaded = true;
+        break;
+      }
+    }catch(e){ continue; }
+  }
+  if(!loaded){
+    kwCards = kwSample();
+    document.getElementById('kw-update-time').textContent = '샘플 데이터';
   }
   kwRender();
 }
@@ -961,6 +1003,20 @@ function kwSample(){
     {category:'trend',title:'2026 UX 트렌드: 공간 인터페이스와 에이전트 UI',summary:'AI 에이전트가 일상화되면서 공간형·대화형 인터페이스가 주류 트렌드로 부상하고 있다.',summary_full:'에이전트 UI, 공간 인터페이스, 적응형 UI 세 가지가 주요 트렌드입니다. AI 에이전트가 작업하는 동안 사용자에게 상태를 투명하게 보여주는 디자인 패턴이 중요해졌습니다.',keywords:['UX 트렌드','에이전트 UI','공간 인터페이스'],source:'NN/g',date:today,url:'https://nngroup.com',collectedAt:tag},
     {category:'frontend',title:'CSS Anchor Positioning 전 브라우저 지원 완료',summary:'CSS Anchor Positioning API가 Chrome, Firefox, Safari 모두에서 정식 지원되며 JS 없는 툴팁 구현이 가능해졌다.',summary_full:'anchor-name과 position-anchor 속성으로 팝오버·드롭다운을 CSS만으로 배치 가능합니다. 기존 JS 좌표 계산 작업이 불필요해져 성능과 접근성이 향상됩니다.',keywords:['CSS','Anchor API','브라우저'],source:'MDN Web Docs',date:today,url:'https://developer.mozilla.org',collectedAt:tag},
   ];
+}
+
+/* ═══ 폼 토글 헬퍼 ═══ */
+function stageToggle(wrapId){
+  const wrap=document.getElementById(wrapId);
+  const sel=document.getElementById(wrapId.replace('-wrap','-st'));
+  if(!wrap||!sel) return;
+  wrap.style.display = sel.value==='scheduled' ? 'flex' : 'none';
+}
+function openTypeToggle(){
+  const sel=document.getElementById('f-open-type');
+  const inp=document.getElementById('f-open');
+  if(!sel||!inp) return;
+  inp.style.display = sel.value==='date' ? 'block' : 'none';
 }
 
 /* ═══ 키보드 ═══ */
