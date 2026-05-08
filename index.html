@@ -6,12 +6,10 @@
 <title>웹디자인팀 포털</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/toss/tossface/dist/tossface.css');
-@font-face {
-  font-family: 'Paperlogy';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');
-  font-weight: 400; font-style: normal;
-}
+/* Pretendard — 본문 기본 서체 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+/* Paperlogy — 타이틀 전용 서체 */
 @font-face {
   font-family: 'Paperlogy';
   src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');
@@ -26,7 +24,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --font: 'Paperlogy', 'Noto Sans KR', sans-serif;
+  --font: 'Pretendard', 'Noto Sans KR', sans-serif;
+  --font-title: 'Paperlogy', 'Pretendard', sans-serif;
   /* 대시보드 */
   --accent: #6366F1; --accent-soft: #EEF2FF;
   --teal: #0F9B8E;
@@ -66,6 +65,7 @@ html, body {
 }
 .g-logo {
   font-size: 17px; font-weight: 800;
+  font-family: var(--font-title);
   color: var(--accent); margin-right: 2rem;
   white-space: nowrap; letter-spacing: -.5px;
   text-decoration: none;
@@ -114,24 +114,24 @@ html, body {
 /* ═══ 대시보드 ═══ */
 #page-dashboard { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
 .db-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
-.db-title { font-size: 22px; font-weight: 800; }
+.db-title { font-size: 22px; font-weight: 800; font-family: var(--font-title); }
 .db-sub { font-size: 14px; color: var(--text3); margin-top: 4px; }
 
 .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 1.5rem; }
 .kpi { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
 .kpi-label { font-size: 14px; color: var(--text3); margin-bottom: 6px; }
-.kpi-val { font-size: 28px; font-weight: 800; color: var(--text); }
+.kpi-val { font-size: 28px; font-weight: 800; color: var(--text); font-family: var(--font-title); }
 .kpi-val.ok { color: var(--green); }
 .kpi-val.warn { color: var(--amber); }
 .kpi-val.danger { color: var(--red); }
 
 .section { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
 .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
-.sec-title { font-size: 15px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 7px; }
+.sec-title { font-size: 15px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 7px; font-family: var(--font-title); }
 
 .open-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .open-item:last-child { border-bottom: none; }
-.open-name { font-size: 15px; font-weight: 600; }
+.open-name { font-size: 15px; font-weight: 600; font-family: var(--font-title); }
 .open-note { font-size: 14px; color: var(--text2); margin-top: 4px; }
 .open-member { font-size: 14px; color: var(--text3); margin-top: 2px; }
 
@@ -153,7 +153,7 @@ html, body {
 .tl-month { font-size: 14px; color: var(--text3); text-align: center; }
 .tl-row { margin-bottom: 24px; }
 .tl-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-wrap: wrap; gap: 4px; }
-.tl-pname { font-size: 14px; font-weight: 600; }
+.tl-pname { font-size: 14px; font-weight: 600; font-family: var(--font-title); }
 .tl-dates { font-size: 14px; color: var(--text3); }
 .tl-bar-wrap { position: relative; height: 28px; margin-top: 20px; }
 .tl-bg { position: absolute; inset: 0; background: var(--bg2); border-radius: 4px; }
@@ -190,7 +190,7 @@ html, body {
 .db-modal-bg.open { display: flex; }
 .db-modal { background: var(--white); border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,.14); }
 .db-modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
-.db-modal-title { font-size: 18px; font-weight: 800; }
+.db-modal-title { font-size: 18px; font-weight: 800; font-family: var(--font-title); }
 .form-row { margin-bottom: 14px; }
 .form-label { font-size: 14px; color: var(--text2); margin-bottom: 6px; display: block; font-weight: 600; }
 .form-input { width: 100%; font-size: 14px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border2); background: var(--white); color: var(--text); font-family: var(--font); transition: border-color .12s; }
@@ -261,7 +261,7 @@ html, body {
 /* 메인 */
 .kw-main { max-width: 1100px; margin: 0 auto; padding: 28px 1.5rem; }
 .kw-meta { display: flex; align-items: baseline; gap: 10px; margin-bottom: 22px; }
-.kw-meta-title { font-size: 14px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); }
+.kw-meta-title { font-size: 14px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); font-family: var(--font-title); }
 .kw-meta-count { font-size: 14px; color: var(--text3); }
 
 /* 카드 그리드 */
@@ -269,7 +269,7 @@ html, body {
 
 /* 카드 */
 .kw-card {
-  background: var(--white); border: 1px solid var(--border); border-radius: var(--r2);
+  background: var(--white); border: 1px solid var(--border); border-radius: 12px;
   overflow: hidden; cursor: pointer;
   transition: transform .2s, box-shadow .2s, border-color .2s;
   display: flex; flex-direction: column;
@@ -283,7 +283,7 @@ html, body {
 .kw-card-top { display: flex; justify-content: space-between; align-items: center; }
 .kw-cat-chip { font-size: 14px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
 .kw-card-date { font-size: 14px; color: var(--text3); }
-.kw-card-title { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text); word-break: keep-all; }
+.kw-card-title { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text); word-break: keep-all; font-family: var(--font-title); }
 .kw-card-summary { font-size: 14px; color: var(--text2); line-height: 1.7; word-break: keep-all; flex: 1; }
 .kw-card-kws { display: flex; flex-wrap: wrap; gap: 5px; }
 .kw-tag { font-size: 14px; padding: 3px 9px; border-radius: 4px; background: var(--bg2); color: var(--text3); border: 1px solid var(--border); }
@@ -326,7 +326,7 @@ html, body {
 @keyframes kwOverlayIn { from{opacity:0;}to{opacity:1;} }
 
 .kw-modal-panel {
-  background: var(--white); border: 1px solid var(--border); border-radius: var(--r2);
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px;
   max-width: 580px; width: 100%; max-height: 88vh; overflow-y: auto;
   box-shadow: 0 8px 40px rgba(0,0,0,.14);
   animation: kwModalIn .25s cubic-bezier(.34,1.56,.64,1);
@@ -345,7 +345,7 @@ html, body {
 }
 .kw-m-close:hover { background: var(--border); color: var(--text); }
 .kw-m-date { font-size: 14px; color: var(--text3); }
-.kw-m-title { font-size: 20px; font-weight: 800; line-height: 1.45; color: var(--text); word-break: keep-all; margin: 0 0 8px; }
+.kw-m-title { font-size: 20px; font-weight: 800; line-height: 1.45; color: var(--text); word-break: keep-all; margin: 0 0 8px; font-family: var(--font-title); }
 .kw-m-src-row { display: flex; align-items: center; gap: 8px; margin-bottom: 22px; }
 .kw-m-src-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .kw-m-src-txt { font-size: 15px; color: var(--text3); }
@@ -569,9 +569,10 @@ function switchPage(id) {
 }
 
 /* ═══ 로컬스토리지 ═══ */
-const LS_P='wd_projects', LS_R='wd_rmcfg', LS_M='wd_rm_manual';
+const LS_P='wd_projects', LS_R='wd_rmcfg', LS_M='wd_rm_manual', LS_INIT='wd_initialized';
 function lsSave(){
   try{
+    localStorage.setItem(LS_INIT, '1');
     localStorage.setItem(LS_P, JSON.stringify(projects));
     localStorage.setItem(LS_R, JSON.stringify(rmCfg));
     localStorage.setItem(LS_M, JSON.stringify(rmIssues.filter(i=>i._m)));
@@ -611,7 +612,13 @@ const SAMPLE = () => [
 ];
 
 lsLoad();
-if(!projects.length){ projects=SAMPLE(); nextPid=3; }
+// 한 번도 저장한 적 없는 첫 방문자에게만 샘플 데이터 표시
+// 저장 이력이 있으면 빈 배열이어도 그대로 유지 (삭제 상태 보존)
+if(!localStorage.getItem(LS_INIT)){
+  projects = SAMPLE();
+  nextPid = 3;
+  lsSave();
+}
 
 /* ═══ 대시보드 렌더 ═══ */
 function dbRender(){ dbKpi(); dbOpenList(); dbTimeline(); rmRender(); }
@@ -734,7 +741,7 @@ function rmRender(){
 }
 
 function rmSetFilter(s){ rmFilter=s; rmRender(); }
-function rmDel(id){ rmIssues=rmIssues.filter(x=>x.id!==id); lsSave(); rmRender(); toast('일감을 삭제했어요'); }
+function rmDel(id){ if(!confirm('이 일감을 목록에서 제거할까요?'))return; rmIssues=rmIssues.filter(x=>x.id!==id); lsSave(); rmRender(); toast('일감을 삭제했어요'); }
 
 async function rmFetch(manual){
   if(manual){ document.getElementById('rm-area').innerHTML='<div class="loading-row">불러오는 중...</div>'; }
@@ -848,7 +855,7 @@ async function rmTestApi(){
   }catch(e){ msg.style.color='var(--red)'; msg.textContent='✗ 연결 실패. 사내 PC에서 열어야 내부망 접속 가능해요.'; }
 }
 
-function dbDel(id){ if(!confirm('삭제할까요?'))return; projects=projects.filter(x=>x.id!==id); lsSave(); dbRender(); toast('프로젝트를 삭제했어요'); }
+function dbDel(id){ if(!confirm('이 프로젝트를 삭제할까요?\n삭제 후 새로고침해도 복원되지 않아요.'))return; projects=projects.filter(x=>x.id!==id); lsSave(); dbRender(); toast('프로젝트를 삭제했어요'); }
 function dbModalClose(){ document.getElementById('db-modal-bg').classList.remove('open'); }
 function dbModalOverlayClick(e){ if(e.target===document.getElementById('db-modal-bg')) dbModalClose(); }
 
