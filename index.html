@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>웹디자인팀 포털</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --accent:#6366F1;--accent2:#818CF8;--accent-soft:#EEF2FF;
+  --teal:#0F9B8E;--teal-soft:#E6FAFA;
+  --amber:#F59E0B;--amber-soft:#FFFBEB;
+  --red:#EF4444;--red-soft:#FEF2F2;
+  --green:#10B981;--green-soft:#ECFDF5;
+  --blue:#3B82F6;--blue-soft:#EFF6FF;
+  --border:#E2E8F0;--border2:#CBD5E1;
+  --bg:#F8FAFC;--bg2:#F1F5F9;
+  --text:#0F172A;--text2:#475569;--text3:#94A3B8;
+  --white:#fff;--r:10px;--r2:14px;
+}
+html,body{height:100%;font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+
+/* NAV */
+.site-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.nav-logo{font-size:15px;font-weight:700;color:var(--accent);margin-right:2rem;white-space:nowrap;letter-spacing:-.3px;}
+.nav-logo span{color:var(--text);}
+.nav-tabs{display:flex;height:100%;}
+.nav-tab{display:flex;align-items:center;gap:6px;padding:0 18px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:color .15s;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.nav-date{font-size:12px;color:var(--text3);}
+.nav-save{font-size:12px;color:var(--green);display:none;align-items:center;gap:4px;}
+.nav-save.show{display:flex;}
+
+/* PAGE */
+.page{display:none;padding:1.5rem;max-width:1100px;margin:0 auto;}
+.page.active{display:block;}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--border2);background:var(--white);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;transition:background .12s;}
+.btn:hover{background:var(--bg2);}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn.primary:hover{background:#4F46E5;}
+.btn.sm{font-size:12px;padding:4px 10px;}
+.btn.danger{color:var(--red);border-color:#FECACA;}
+.btn.danger:hover{background:var(--red-soft);}
+.btn.teal{background:var(--teal);border-color:var(--teal);color:#fff;}
+.btn.teal:hover{background:#0C8278;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.kpi-label{font-size:12px;color:var(--text3);margin-bottom:4px;}
+.kpi-val{font-size:24px;font-weight:700;color:var(--text);}
+.kpi-val.ok{color:var(--green);}
+.kpi-val.warn{color:var(--amber);}
+.kpi-val.danger{color:var(--red);}
+
+/* SECTION */
+.section{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.25rem;margin-bottom:1rem;}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.sec-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
+
+/* OPEN LIST */
+.open-item{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.open-item:last-child{border-bottom:none;}
+.open-sub{font-size:12px;color:var(--text3);margin-left:6px;}
+.open-note{font-size:12px;color:var(--text2);margin-top:3px;}
+.dday{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+.dday.neg{background:var(--red-soft);color:var(--red);}
+.dday.soon{background:var(--amber-soft);color:var(--amber);}
+.dday.good{background:var(--green-soft);color:var(--green);}
+.dday.today2{background:var(--accent-soft);color:var(--accent);}
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px;}
+.badge.delay{background:var(--red-soft);color:var(--red);}
+.badge.ontime{background:var(--green-soft);color:var(--green);}
+
+/* TIMELINE */
+.tl-row{margin-bottom:22px;}
+.tl-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;}
+.tl-bar-wrap{position:relative;height:26px;margin-top:18px;}
+.tl-bg{position:absolute;inset:0;background:var(--bg2);border-radius:4px;}
+.tl-seg{position:absolute;top:3px;height:20px;border-radius:3px;font-size:11px;display:flex;align-items:center;padding:0 5px;white-space:nowrap;overflow:hidden;}
+.seg-d{background:#9FE1CB;color:#085041;}
+.seg-p{background:#B5D4F4;color:#0C447C;}
+.seg-dev{background:#D3D1C7;color:#444441;}
+.seg-t{background:#FAC775;color:#633806;}
+.today-line{position:absolute;top:-4px;width:2px;background:var(--red);height:34px;border-radius:1px;z-index:5;}
+.today-tip{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--red);white-space:nowrap;font-weight:700;}
+.open-marker{position:absolute;top:0;width:2px;height:26px;background:var(--accent);border-radius:1px;z-index:4;}
+.end-label{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--accent);white-space:nowrap;font-weight:700;}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);}
+.leg-dot{width:12px;height:12px;border-radius:2px;}
+.tl-months{display:flex;margin-bottom:4px;}
+.tl-month{font-size:11px;color:var(--text3);text-align:center;}
+
+/* REDMINE */
+.rm-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.rm-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+.rm-tab{font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;font-family:inherit;transition:all .12s;}
+.rm-tab:hover{border-color:var(--accent);color:var(--accent);}
+.rm-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500;}
+.issue-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.issue-table th{font-size:12px;color:var(--text3);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);}
+.issue-table td{font-size:13px;padding:9px 8px;border-bottom:1px solid var(--border);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.issue-table tr:last-child td{border-bottom:none;}
+.issue-table tr:hover td{background:var(--bg2);}
+.st-badge{font-size:11px;padding:2px 10px;border-radius:20px;white-space:nowrap;}
+.st-대기{background:var(--amber-soft);color:var(--amber);}
+.st-신규{background:var(--blue-soft);color:var(--blue);}
+.st-진행{background:var(--green-soft);color:var(--green);}
+.st-수정완료{background:var(--accent-soft);color:var(--accent);}
+.st-default{background:var(--bg2);color:var(--text2);}
+.rm-tip{font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--r);padding:10px 12px;line-height:1.7;margin-bottom:12px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--r2);padding:1.5rem;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.modal-title{font-size:16px;font-weight:700;}
+.form-row{margin-bottom:12px;}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block;font-weight:500;}
+.form-input{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--border2);background:var(--white);color:var(--text);font-family:inherit;transition:border-color .12s;}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.1);}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.form-section{font-size:12px;font-weight:700;color:var(--text2);margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);}
+.empty-msg{text-align:center;padding:2rem;font-size:13px;color:var(--text3);}
+.loading-row{text-align:center;padding:1.5rem;font-size:13px;color:var(--text3);}
+
+/* KNOWLEDGE */
+.kw-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
+.kw-chip{font-size:12px;padding:5px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;font-family:inherit;transition:all .12s;}
+.kw-chip:hover{border-color:var(--accent);color:var(--accent);}
+.kw-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500;}
+.news-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.news-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.news-card:hover{border-color:var(--accent2);box-shadow:0 2px 12px rgba(99,102,241,.08);}
+.news-cat{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+.news-title{font-size:14px;font-weight:500;line-height:1.5;margin-bottom:6px;color:var(--text);}
+.news-summary{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;}
+.news-meta{font-size:11px;color:var(--text3);display:flex;justify-content:space-between;}
+.kw-detail-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem;}
+.kw-section-label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;margin-top:14px;}
+.kw-body{font-size:13px;line-height:1.8;color:var(--text);}
+.tag{font-size:11px;padding:3px 10px;background:var(--bg2);color:var(--text2);border-radius:20px;display:inline-block;margin:2px;}
+.cat-figma{background:#E9D7FD;color:#6B21A8;}
+.cat-ai{background:#DBEAFE;color:#1D4ED8;}
+.cat-front{background:#DCFCE7;color:#15803D;}
+.cat-design{background:#FEF9C3;color:#854D0E;}
+.cat-trend{background:#FCE7F3;color:#9D174D;}
+.cat-adobe{background:#FFE4CC;color:#9A3412;}
+.cat-industry{background:#F3F4F6;color:#374151;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;font-size:13px;padding:10px 18px;border-radius:var(--r);z-index:999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .news-grid{grid-template-columns:1fr;}
+  .form-row-2{grid-template-columns:1fr;}
+  .nav-tab span{display:none;}
+}
+
+  /* ── 지식지갑 원본 스타일 ── */
+  #page-knowledge { background: #f7f7f5; }
+  .kw-top-bar { background:#fff; border-bottom:1px solid #eee; padding:10px 1.5rem; }
+  .kw-top-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+  .kw-update-badge { font-size:.72rem; color:#aaa; }
+  .kw-refresh-btn { font-size:.75rem; padding:5px 14px; border-radius:20px; border:1px solid #d0d0cc; background:transparent; color:#666; cursor:pointer; font-family:inherit; transition:all .2s; }
+  .kw-refresh-btn:hover { border-color:#6366F1; color:#6366F1; }
+  .kw-filter-wrap { background:#fff; border-bottom:1px solid #eee; padding:0 1.5rem; }
+  .kw-filter-inner { max-width:1100px; margin:0 auto; display:flex; gap:6px; padding:12px 0; overflow-x:auto; scrollbar-width:none; }
+  .kw-filter-inner::-webkit-scrollbar { display:none; }
+  .kw-filter-btn { white-space:nowrap; padding:5px 16px; border-radius:20px; border:1px solid #ddd; background:transparent; color:#666; font-size:.8rem; cursor:pointer; font-family:inherit; transition:all .18s; flex-shrink:0; }
+  .kw-filter-btn:hover { border-color:#bbb; color:#333; background:#f9f9f9; }
+  .kw-filter-btn.active { font-weight:600; border-color:transparent; }
+  .kw-filter-btn[data-cat="all"].active      { background:#111; color:#fff; }
+  .kw-filter-btn[data-cat="figma"].active    { background:#3a7d44; color:#fff; }
+  .kw-filter-btn[data-cat="adobe"].active    { background:#b84c1a; color:#fff; }
+  .kw-filter-btn[data-cat="industry"].active { background:#7b3fa0; color:#fff; }
+  .kw-filter-btn[data-cat="design"].active   { background:#1a5fa0; color:#fff; }
+  .kw-filter-btn[data-cat="trend"].active    { background:#a06020; color:#fff; }
+  .kw-filter-btn[data-cat="frontend"].active { background:#1a7a7a; color:#fff; }
+  .kw-filter-btn[data-cat="ai"].active       { background:#c2185b; color:#fff; }
+  .kw-main { max-width:1100px; margin:0 auto; padding:28px 1.5rem; }
+  .kw-section-meta { display:flex; align-items:baseline; gap:10px; margin-bottom:20px; }
+  .kw-section-title { font-size:.72rem; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:#999; }
+  .kw-section-count { font-size:.72rem; color:#ccc; }
+  .kw-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+  .kw-news-card { background:#fff; border:1px solid #e8e8e4; border-radius:12px; overflow:hidden; cursor:pointer; transition:transform .2s,box-shadow .2s,border-color .2s; display:flex; flex-direction:column; animation:kwFadeUp .35s ease both; }
+  .kw-news-card:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(0,0,0,.07); border-color:#d0d0cc; }
+  @keyframes kwFadeUp { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
+  .kw-card-accent { height:3px; }
+  .kw-card-body { padding:16px 18px; flex:1; display:flex; flex-direction:column; gap:10px; }
+  .kw-card-top { display:flex; justify-content:space-between; align-items:center; }
+  .kw-cat-chip { font-size:.7rem; font-weight:700; padding:3px 10px; border-radius:20px; }
+  .kw-card-date { font-size:.7rem; color:#bbb; }
+  .kw-card-title { font-size:.9rem; font-weight:700; line-height:1.5; color:#111; word-break:keep-all; margin:0; }
+  .kw-card-summary { font-size:.8rem; color:#666; line-height:1.7; word-break:keep-all; margin:0; flex:1; }
+  .kw-card-keywords { display:flex; flex-wrap:wrap; gap:5px; }
+  .kw-kw-tag { font-size:.68rem; padding:2px 8px; border-radius:4px; background:#f4f4f2; color:#888; border:1px solid #eee; }
+  .kw-card-footer { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid #f0f0ee; margin-top:auto; }
+  .kw-card-source { font-size:.7rem; color:#bbb; }
+  .kw-card-link { font-size:.75rem; font-weight:600; color:#2563eb; text-decoration:none; }
+  .kw-card-figma    .kw-card-accent { background:#3a7d44; }
+  .kw-card-adobe    .kw-card-accent { background:#b84c1a; }
+  .kw-card-industry .kw-card-accent { background:#7b3fa0; }
+  .kw-card-design   .kw-card-accent { background:#1a5fa0; }
+  .kw-card-trend    .kw-card-accent { background:#a06020; }
+  .kw-card-frontend .kw-card-accent { background:#1a7a7a; }
+  .kw-card-ai       .kw-card-accent { background:#c2185b; }
+  .kw-chip-figma    { background:rgba(58,125,68,.08);   color:#3a7d44; }
+  .kw-chip-adobe    { background:rgba(184,76,26,.08);   color:#b84c1a; }
+  .kw-chip-industry { background:rgba(123,63,160,.08);  color:#7b3fa0; }
+  .kw-chip-design   { background:rgba(26,95,160,.08);   color:#1a5fa0; }
+  .kw-chip-trend    { background:rgba(160,96,32,.08);   color:#a06020; }
+  .kw-chip-frontend { background:rgba(26,122,122,.08);  color:#1a7a7a; }
+  .kw-chip-ai       { background:rgba(194,24,91,.08);   color:#c2185b; }
+  .kw-loading-state { grid-column:1/-1; text-align:center; padding:60px 20px; color:#bbb; font-size:.85rem; }
+  .kw-dots span { display:inline-block; width:7px; height:7px; border-radius:50%; background:#2563eb; margin:0 3px; animation:kwDot 1.2s infinite; opacity:.3; }
+  .kw-dots span:nth-child(2) { animation-delay:.2s; }
+  .kw-dots span:nth-child(3) { animation-delay:.4s; }
+  @keyframes kwDot { 0%,80%,100%{transform:translateY(0);opacity:.3;}40%{transform:translateY(-7px);opacity:1;} }
+  /* 지식지갑 모달 */
+  .kw-modal-overlay { display:none; position:fixed; inset:0; background:rgba(10,10,10,.55); backdrop-filter:blur(6px); z-index:500; align-items:center; justify-content:center; padding:20px; }
+  .kw-modal-overlay.open { display:flex; }
+  .kw-modal-panel { background:#fff; border-radius:20px; max-width:580px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.22); animation:kwModalIn .25s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes kwModalIn { from{opacity:0;transform:translateY(20px) scale(.95);}to{opacity:1;transform:translateY(0) scale(1);} }
+  .kw-modal-accent { height:5px; border-radius:20px 20px 0 0; }
+  .kw-modal-inner { padding:30px 32px 32px; }
+  .kw-modal-header-row { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
+  .kw-modal-meta { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .kw-modal-close { width:32px; height:32px; border-radius:50%; background:#f4f4f2; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1rem; color:#888; transition:background .15s; }
+  .kw-modal-close:hover { background:#eee; color:#333; }
+  .kw-modal-title { font-size:1.25rem; font-weight:700; line-height:1.45; color:#0f0f0f; word-break:keep-all; margin:0 0 6px; }
+  .kw-modal-source-row { display:flex; align-items:center; gap:8px; margin-bottom:20px; }
+  .kw-modal-source-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .kw-modal-source-text { font-size:.78rem; color:#aaa; }
+  .kw-modal-date-text { font-size:.78rem; color:#ccc; }
+  .kw-modal-divider { border:none; border-top:1px solid #f0f0ee; margin:20px 0; }
+  .kw-modal-section-label { font-size:.68rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#bbb; margin:0 0 10px; }
+  .kw-modal-summary { font-size:.9rem; color:#333; line-height:1.85; word-break:keep-all; margin:0; }
+  .kw-modal-point-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
+  .kw-modal-point-list li { display:flex; gap:10px; align-items:flex-start; font-size:.85rem; color:#444; line-height:1.65; }
+  .kw-modal-point-dot { width:6px; height:6px; border-radius:50%; margin-top:7px; flex-shrink:0; }
+  .kw-modal-kw-wrap { display:flex; flex-wrap:wrap; gap:6px; }
+  .kw-modal-kw-tag { font-size:.75rem; padding:4px 12px; border-radius:20px; background:#f4f4f2; color:#777; border:1px solid #ebebeb; }
+  .kw-modal-footer { display:flex; justify-content:space-between; align-items:center; padding-top:20px; border-top:1px solid #f0f0ee; margin-top:4px; }
+  .kw-modal-go-btn { display:inline-flex; align-items:center; gap:6px; font-size:.85rem; font-weight:700; padding:11px 22px; border-radius:10px; background:#2563eb; color:#fff; text-decoration:none; transition:background .18s; font-family:inherit; border:none; cursor:pointer; }
+  .kw-modal-go-btn:hover { background:#1d4ed8; }
+  .kw-modal-share-btn { font-size:.8rem; color:#aaa; background:none; border:1px solid #eee; border-radius:8px; padding:10px 16px; cursor:pointer; font-family:inherit; transition:all .15s; }
+  .kw-modal-share-btn:hover { border-color:#ccc; color:#666; }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-logo">웹디자인팀<span> 포털</span></div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchPage('dashboard',this)"><i class="ti ti-layout-dashboard"></i> <span>업무 대시보드</span></div>
+    <div class="nav-tab" onclick="switchPage('knowledge',this)"><i class="ti ti-bulb"></i> <span>지식지갑</span></div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-save" id="save-indicator"><i class="ti ti-device-floppy" style="font-size:14px;"></i> 저장됨</div>
+    <span class="nav-date" id="nav-date"></span>
+  </div>
+</nav>
+
+<!-- ── 대시보드 ── -->
+<div id="page-dashboard" class="page active">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;">
+    <div>
+      <div style="font-size:20px;font-weight:700;">프로젝트 일정 대시보드</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:3px;">기획리뷰 후 일정을 등록하고 오픈일까지 진행 현황을 관리해요</div>
+    </div>
+    <button class="btn primary" onclick="showForm('add')"><i class="ti ti-plus"></i> 프로젝트 추가</button>
+  </div>
+
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+  <div class="section">
+    <div class="sec-head"><span class="sec-title"><i class="ti ti-calendar-event"></i>오픈일 D-Day 현황</span></div>
+    <div id="open-list"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><span class="sec-title"><i class="ti ti-timeline"></i>일정 타임라인</span></div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#9FE1CB;"></div>디자인</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#B5D4F4;"></div>퍼블</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#D3D1C7;"></div>개발</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#FAC775;"></div>테스트</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#6366F1;width:4px;border-radius:2px;"></div>오픈/엔딩일</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#EF4444;width:4px;border-radius:2px;"></div>오늘</div>
+    </div>
+    <div class="tl-months" id="tl-months"></div>
+    <div id="tl-wrap"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-title"><i class="ti ti-bug"></i>레드마인 일감 <span id="rm-count-badge" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:4px;"></span></span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn sm teal" onclick="fetchRedmine(true)"><i class="ti ti-refresh"></i> 새로고침</button>
+        <button class="btn sm primary" onclick="showForm('redmine-manual')"><i class="ti ti-plus"></i> 수동 추가</button>
+        <button class="btn sm" onclick="showForm('redmine')"><i class="ti ti-settings"></i> API 설정</button>
+      </div>
+    </div>
+    <div id="redmine-area"></div>
+  </div>
+</div>
+
+
+<!-- ── 지식지갑 페이지 ── -->
+<div id="page-knowledge" class="page">
+  <div class="kw-top-bar">
+    <div class="kw-top-inner">
+      <span class="kw-update-badge" id="kwUpdateTime"></span>
+      <button class="kw-refresh-btn" onclick="kwLoadNews()">↻ 새로고침</button>
+    </div>
+  </div>
+  <div class="kw-filter-wrap">
+    <div class="kw-filter-inner">
+      <button class="kw-filter-btn active" data-cat="all"      onclick="kwSetFilter('all',this)">전체</button>
+      <button class="kw-filter-btn"        data-cat="figma"    onclick="kwSetFilter('figma',this)">피그마 신기능</button>
+      <button class="kw-filter-btn"        data-cat="adobe"    onclick="kwSetFilter('adobe',this)">어도비 신기능</button>
+      <button class="kw-filter-btn"        data-cat="frontend" onclick="kwSetFilter('frontend',this)">프론트엔드</button>
+      <button class="kw-filter-btn"        data-cat="ai"       onclick="kwSetFilter('ai',this)">🤖 AI 뉴스</button>
+      <button class="kw-filter-btn"        data-cat="industry" onclick="kwSetFilter('industry',this)">업계동향</button>
+      <button class="kw-filter-btn"        data-cat="design"   onclick="kwSetFilter('design',this)">디자인</button>
+      <button class="kw-filter-btn"        data-cat="trend"    onclick="kwSetFilter('trend',this)">트렌드</button>
+    </div>
+  </div>
+  <main class="kw-main">
+    <div class="kw-section-meta">
+      <span class="kw-section-title">오늘의 지식</span>
+      <span class="kw-section-count" id="kwCardCount"></span>
+    </div>
+    <div class="kw-card-grid" id="kwCardGrid">
+      <div class="kw-loading-state">
+        <div class="kw-dots"><span></span><span></span><span></span></div>
+        <p style="margin-top:14px;">뉴스를 불러오는 중이에요</p>
+      </div>
+    </div>
+  </main>
+  <!-- 지식지갑 모달 -->
+  <div class="kw-modal-overlay" id="kwModalOverlay" onclick="kwCloseModal(event)">
+    <div class="kw-modal-panel">
+      <div class="kw-modal-accent" id="kwModalAccent"></div>
+      <div class="kw-modal-inner">
+        <div class="kw-modal-header-row">
+          <div class="kw-modal-meta">
+            <span class="kw-cat-chip" id="kwModalChip"></span>
+            <span class="kw-modal-date-text" id="kwModalDate"></span>
+          </div>
+          <button class="kw-modal-close" onclick="kwCloseModalDirect()">✕</button>
+        </div>
+        <h2 class="kw-modal-title" id="kwModalTitle"></h2>
+        <div class="kw-modal-source-row">
+          <span class="kw-modal-source-dot" id="kwModalSourceDot"></span>
+          <span class="kw-modal-source-text" id="kwModalSource"></span>
+          <span class="kw-modal-date-text">에서 발행</span>
+        </div>
+        <hr class="kw-modal-divider">
+        <p class="kw-modal-section-label">핵심 요약</p>
+        <p class="kw-modal-summary" id="kwModalSummary"></p>
+        <hr class="kw-modal-divider">
+        <p class="kw-modal-section-label">상세 내용</p>
+        <ul class="kw-modal-point-list" id="kwModalPoints"></ul>
+        <hr class="kw-modal-divider">
+        <p class="kw-modal-section-label">관련 키워드</p>
+        <div class="kw-modal-kw-wrap" id="kwModalKeywords"></div>
+        <div class="kw-modal-footer">
+          <button class="kw-modal-share-btn" onclick="kwCopyLink()">🔗 링크 복사</button>
+          <a href="#" class="kw-modal-go-btn" id="kwModalLink" target="_blank" rel="noopener">원문 보러가기 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 날짜 유틸 ──
+const TODAY = new Date();
+TODAY.setHours(0,0,0,0);
+document.getElementById('nav-date').textContent =
+  TODAY.getFullYear() + '.' + (TODAY.getMonth()+1) + '.' + TODAY.getDate();
+
+function fmt(d){ return (d.getMonth()+1)+'/'+d.getDate(); }
+function fmtI(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parseD(s){ const p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+function dday(d){
+  const diff = Math.round((d - TODAY) / 86400000);
+  if(diff===0) return {txt:'D-Day', cls:'today2'};
+  if(diff>0)   return {txt:'D-'+diff, cls: diff<=7?'soon':'good'};
+  return {txt:'D+'+Math.abs(diff), cls:'neg'};
+}
+
+// ── 로컬스토리지 저장/불러오기 ──
+const LS_PROJ = 'wd_projects';
+const LS_RM   = 'wd_rm_config';
+const LS_RMISSUES = 'wd_rm_manual';
+
+function saveData(){
+  try{
+    localStorage.setItem(LS_PROJ, JSON.stringify(projects));
+    localStorage.setItem(LS_RM,   JSON.stringify(rmConfig));
+    const manuals = rmIssues.filter(i=>i._manual);
+    localStorage.setItem(LS_RMISSUES, JSON.stringify(manuals));
+    showSaveIndicator();
+  }catch(e){}
+}
+function loadData(){
+  try{
+    const p = localStorage.getItem(LS_PROJ);
+    if(p) projects = JSON.parse(p);
+    const r = localStorage.getItem(LS_RM);
+    if(r) rmConfig = {...rmConfig, ...JSON.parse(r)};
+    const m = localStorage.getItem(LS_RMISSUES);
+    if(m) rmIssues = JSON.parse(m);
+    if(projects.length) nextPid = Math.max(...projects.map(x=>x.id)) + 1;
+  }catch(e){}
+}
+function showSaveIndicator(){
+  const el = document.getElementById('save-indicator');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2000);
+}
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+// ── 데이터 ──
+let projects = [];
+let nextPid = 1;
+let rmConfig = {
+  url: 'http://10.30.100.24',
+  apiKey: '',           // ← 보안상 비워둠. API 설정에서 입력
+  projectId: 'hb_design',
+  waitStatus: '대기,신규'
+};
+let rmIssues = [];
+let rmFilter = '대기';
+let rmFetched = false;
+let modalMode = '', editId = null;
+
+// ── 초기 샘플 데이터 (로컬스토리지가 비어있을 때만) ──
+const SAMPLE_PROJECTS = [
+  {id:1,name:'초등 수학 앱 개선',open: fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+7)),
+   design:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()-15)),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()-7))],
+   pub:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()-7)),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+1))],
+   dev:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()-10)),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+3))],
+   test:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate())),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+6))],
+   members:'김민지, 박준호', note:'기획리뷰 완료. 디자인 QA 필요.'},
+  {id:2,name:'중등 국어 LMS UI',open: fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+20)),
+   design:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()-5)),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+4))],
+   pub:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+4)),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+12))],
+   dev:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+2)),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+16))],
+   test:[fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+14)),fmtI(new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+19))],
+   members:'이수현, 최유나', note:''},
+];
+
+loadData();
+if(projects.length === 0){
+  projects = SAMPLE_PROJECTS;
+  nextPid = 3;
+}
+
+// ── 페이지 전환 ──
+function switchPage(id, tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  tab.classList.add('active');
+  if(id==='knowledge'&&!kwLoaded){kwLoadNews();kwLoaded=true;}
+}
+
+// ── 대시보드 전체 렌더 ──
+function renderDash(){
+  renderKPI();
+  renderOpenList();
+  renderTimeline();
+  renderRedmineArea();
+}
+
+function renderKPI(){
+  let over=0, warn=0, month=0;
+  projects.forEach(p=>{
+    const d=parseD(p.open), diff=Math.round((d-TODAY)/86400000);
+    if(diff<0) over++;
+    if(diff>=0&&diff<=7) warn++;
+    if(d.getMonth()===TODAY.getMonth()&&d.getFullYear()===TODAY.getFullYear()) month++;
+  });
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi"><div class="kpi-label">전체 프로젝트</div><div class="kpi-val">${projects.length}</div></div>
+    <div class="kpi"><div class="kpi-label">이번 달 오픈</div><div class="kpi-val ok">${month}</div></div>
+    <div class="kpi"><div class="kpi-label">딜레이 위험</div><div class="kpi-val warn">${warn}</div></div>
+    <div class="kpi"><div class="kpi-label">오픈 초과</div><div class="kpi-val danger">${over}</div></div>`;
+}
+
+function renderOpenList(){
+  const el = document.getElementById('open-list');
+  if(!projects.length){ el.innerHTML='<div class="empty-msg">등록된 프로젝트가 없어요<br><small>상단 [프로젝트 추가] 버튼으로 추가해요</small></div>'; return; }
+  el.innerHTML = [...projects].sort((a,b)=>parseD(a.open)-parseD(b.open)).map(p=>{
+    const dd = dday(parseD(p.open));
+    const isDelay = Math.round((parseD(p.open)-TODAY)/86400000) < 0;
+    return `<div class="open-item">
+      <div style="flex:1;min-width:0;">
+        <div><span style="font-size:14px;font-weight:500;">${p.name}</span>
+          <span class="open-sub">오픈 ${fmt(parseD(p.open))}</span>
+          <span class="badge ${isDelay?'delay':'ontime'}">${isDelay?'딜레이':'정상'}</span></div>
+        ${p.note?`<div class="open-note"><i class="ti ti-notes" style="font-size:11px;"></i> ${p.note}</div>`:''}
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">담당: ${p.members||'—'}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:12px;">
+        <span class="dday ${dd.cls}">${dd.txt}</span>
+        <button class="btn sm" onclick="showForm('edit',${p.id})" title="수정"><i class="ti ti-edit"></i></button>
+        <button class="btn sm danger" onclick="delProj(${p.id})" title="삭제"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTimeline(){
+  if(!projects.length){
+    document.getElementById('tl-wrap').innerHTML='<div class="empty-msg">등록된 프로젝트가 없어요</div>';
+    document.getElementById('tl-months').innerHTML='';
+    return;
+  }
+  let mn=new Date(TODAY), mx=new Date(TODAY);
+  projects.forEach(p=>{
+    [p.design,p.pub,p.dev,p.test].forEach(r=>{
+      const a=parseD(r[0]),b=parseD(r[1]);
+      if(a<mn) mn=new Date(a); if(b>mx) mx=new Date(b);
+    });
+    const od=parseD(p.open);
+    if(od<mn) mn=new Date(od); if(od>mx) mx=new Date(od);
+  });
+  mn.setDate(mn.getDate()-4); mx.setDate(mx.getDate()+8);
+  const TOTAL = Math.max(1, Math.round((mx-mn)/86400000));
+  const pct  = s => (Math.round((parseD(s)-mn)/86400000)/TOTAL*100).toFixed(2)+'%';
+  const wpct = (s,e) => Math.max(0.5, (Math.round((parseD(e)-parseD(s))/86400000)/TOTAL*100)).toFixed(2)+'%';
+  const todayOff = (Math.round((TODAY-mn)/86400000)/TOTAL*100).toFixed(2);
+
+  // 월 헤더
+  const mhdr = document.getElementById('tl-months'); mhdr.innerHTML='';
+  let cur = new Date(mn.getFullYear(), mn.getMonth(), 1);
+  while(cur <= mx){
+    const mEnd = new Date(cur.getFullYear(), cur.getMonth()+1, 0);
+    const vs = cur<mn?mn:cur, ve = mEnd>mx?mx:mEnd;
+    const w = (Math.round((ve-vs)/86400000)+1)/TOTAL*100;
+    const d = document.createElement('div');
+    d.className='tl-month'; d.style.width=w.toFixed(1)+'%';
+    d.textContent = (cur.getMonth()+1)+'월';
+    mhdr.appendChild(d);
+    cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+  }
+
+  document.getElementById('tl-wrap').innerHTML = [...projects]
+    .sort((a,b)=>parseD(a.open)-parseD(b.open))
+    .map(p=>{
+      const isDelay = Math.round((parseD(p.open)-TODAY)/86400000) < 0;
+      const openOff = (Math.round((parseD(p.open)-mn)/86400000)/TOTAL*100).toFixed(2);
+      return `<div class="tl-row">
+        <div class="tl-meta">
+          <span style="font-size:13px;font-weight:500;">${p.name}
+            <span class="badge ${isDelay?'delay':'ontime'}" style="margin-left:6px;">${isDelay?'딜레이':'정상'}</span>
+          </span>
+          <span style="font-size:12px;color:var(--text3);">엔딩 ${fmt(parseD(p.test[1]))} → 오픈 ${fmt(parseD(p.open))}</span>
+        </div>
+        <div class="tl-bar-wrap">
+          <div class="tl-bg"></div>
+          <div class="tl-seg seg-d" style="left:${pct(p.design[0])};width:${wpct(p.design[0],p.design[1])}">디자인</div>
+          <div class="tl-seg seg-p" style="left:${pct(p.pub[0])};width:${wpct(p.pub[0],p.pub[1])}">퍼블</div>
+          <div class="tl-seg seg-dev" style="left:${pct(p.dev[0])};width:${wpct(p.dev[0],p.dev[1])}">개발</div>
+          <div class="tl-seg seg-t" style="left:${pct(p.test[0])};width:${wpct(p.test[0],p.test[1])}">테스트</div>
+          <div class="open-marker" style="left:${openOff}%">
+            <span class="end-label">오픈 ${fmt(parseD(p.open))}</span>
+          </div>
+          <div class="today-line" style="left:${todayOff}%">
+            <span class="today-tip">오늘</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+// ── 레드마인 ──
+function renderRedmineArea(){
+  const area = document.getElementById('redmine-area');
+  const waitStatuses = rmConfig.waitStatus.split(',').map(s=>s.trim());
+  const filtered = rmFilter==='전체' ? rmIssues : rmIssues.filter(i=>i.status?.name===rmFilter);
+  const waitCount = rmIssues.filter(i=>waitStatuses.includes(i.status?.name)).length;
+  document.getElementById('rm-count-badge').textContent = `대기 ${waitCount}건`;
+
+  const statuses = [...new Set(['대기','신규','진행','수정완료', ...rmIssues.map(i=>i.status?.name).filter(Boolean)]),'전체'];
+  const tabHtml = `<div class="rm-tabs">${[...new Set(statuses)].map(s=>
+    `<button class="rm-tab ${rmFilter===s?'active':''}" onclick="setRmFilter('${s}')">${s}</button>`
+  ).join('')}</div>`;
+
+  if(!rmFetched){
+    area.innerHTML = tabHtml + '<div class="loading-row"><i class="ti ti-loader-2" style="font-size:16px;"></i> 레드마인에서 일감을 불러오는 중...</div>';
+    fetchRedmine(false);
+    return;
+  }
+  if(!filtered.length){
+    area.innerHTML = `<div class="rm-toolbar">${tabHtml}</div><div class="empty-msg">${rmFilter} 상태 일감이 없어요</div>`;
+    return;
+  }
+  area.innerHTML = `<div class="rm-toolbar">${tabHtml}
+    <span style="font-size:13px;color:var(--text2);">${rmFilter} <strong>${filtered.length}</strong>건</span>
+  </div>
+  <table class="issue-table">
+    <thead><tr>
+      <th style="width:50px;">번호</th>
+      <th>제목</th>
+      <th style="width:72px;">상태</th>
+      <th style="width:72px;">담당자</th>
+      <th style="width:76px;">시작일</th>
+      <th style="width:38px;"></th>
+    </tr></thead>
+    <tbody>${filtered.map(i=>{
+      const stCls = 'st-'+(i.status?.name||'default');
+      return `<tr>
+        <td style="color:var(--text3);font-size:12px;">#${i.id}</td>
+        <td title="${i.subject}">${i.subject}</td>
+        <td><span class="st-badge ${stCls}">${i.status?.name||'—'}</span></td>
+        <td style="font-size:12px;color:var(--text2);">${i.assigned_to?.name||'미배정'}</td>
+        <td style="font-size:12px;color:var(--text3);">${i.start_date||'—'}</td>
+        <td><button class="btn sm danger" onclick="delIssue(${i.id})" title="삭제"><i class="ti ti-x"></i></button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function setRmFilter(s){ rmFilter=s; renderRedmineArea(); }
+
+async function fetchRedmine(manual){
+  if(manual){
+    document.getElementById('redmine-area').innerHTML =
+      '<div class="loading-row"><i class="ti ti-loader-2"></i> 불러오는 중...</div>';
+  }
+  if(!rmConfig.apiKey){ rmFetched=true; renderRedmineArea(); return; }
+  try{
+    const r = await fetch(
+      `${rmConfig.url}/projects/${rmConfig.projectId}/issues.json?key=${rmConfig.apiKey}&limit=100&status_id=open`
+    );
+    if(!r.ok){ rmFetched=true; renderRedmineArea(); return; }
+    const data = await r.json();
+    const manuals = rmIssues.filter(i=>i._manual);
+    rmIssues = [...manuals, ...(data.issues||[])];
+    rmFetched = true;
+    saveData();
+    renderRedmineArea();
+    if(manual) showToast('레드마인 일감을 불러왔어요');
+  }catch(e){
+    rmFetched = true;
+    renderRedmineArea();
+    if(manual) showToast('연결 실패 — API 설정을 확인해주세요');
+  }
+}
+
+function delIssue(id){
+  rmIssues = rmIssues.filter(x=>x.id!==id);
+  saveData();
+  renderRedmineArea();
+  showToast('일감을 삭제했어요');
+}
+
+// ── 프로젝트 CRUD ──
+function delProj(id){
+  if(!confirm('이 프로젝트를 삭제할까요?')) return;
+  projects = projects.filter(x=>x.id!==id);
+  saveData();
+  renderDash();
+  showToast('프로젝트를 삭제했어요');
+}
+
+// ── 모달 ──
+function showForm(mode, id){
+  modalMode = mode; editId = id||null;
+  const t = fmtI(TODAY);
+
+  if(mode==='add' || mode==='edit'){
+    const p = mode==='edit' ? projects.find(x=>x.id===id) : {};
+    document.getElementById('modal-title').textContent = mode==='add'?'프로젝트 추가':'프로젝트 수정';
+    document.getElementById('modal-body').innerHTML = `
+      <div class="form-row"><label class="form-label">프로젝트명 *</label>
+        <input class="form-input" id="f-name" value="${p.name||''}" placeholder="예: 초등 수학 앱 개선"></div>
+      <div class="form-row"><label class="form-label">오픈일 *</label>
+        <input class="form-input" type="date" id="f-open" value="${p.open||t}"></div>
+      <div class="form-section">단계별 기간 <span style="font-weight:400;color:var(--text3);">(시작일 ~ 종료일)</span></div>
+      <div class="form-row"><label class="form-label">디자인</label>
+        <div class="form-row-2"><input class="form-input" type="date" id="f-ds" value="${p.design?.[0]||t}"><input class="form-input" type="date" id="f-de" value="${p.design?.[1]||t}"></div></div>
+      <div class="form-row"><label class="form-label">퍼블</label>
+        <div class="form-row-2"><input class="form-input" type="date" id="f-ps" value="${p.pub?.[0]||t}"><input class="form-input" type="date" id="f-pe" value="${p.pub?.[1]||t}"></div></div>
+      <div class="form-row"><label class="form-label">개발</label>
+        <div class="form-row-2"><input class="form-input" type="date" id="f-devs" value="${p.dev?.[0]||t}"><input class="form-input" type="date" id="f-deve" value="${p.dev?.[1]||t}"></div></div>
+      <div class="form-row"><label class="form-label">테스트 <span style="font-weight:400;color:var(--text3);">(종료일 = 엔딩일)</span></label>
+        <div class="form-row-2"><input class="form-input" type="date" id="f-ts" value="${p.test?.[0]||t}"><input class="form-input" type="date" id="f-te" value="${p.test?.[1]||t}"></div></div>
+      <div class="form-section">추가 정보</div>
+      <div class="form-row"><label class="form-label">담당자 <span style="font-weight:400;color:var(--text3);">(쉼표로 구분)</span></label>
+        <input class="form-input" id="f-members" value="${p.members||''}" placeholder="예: 김민지, 박준호"></div>
+      <div class="form-row"><label class="form-label">비고</label>
+        <textarea class="form-input" id="f-note" rows="2" placeholder="특이사항, 전달 내용 등">${p.note||''}</textarea></div>`;
+
+  } else if(mode==='redmine-manual'){
+    document.getElementById('modal-title').textContent = '레드마인 일감 수동 추가';
+    document.getElementById('modal-body').innerHTML = `
+      <div class="form-row"><label class="form-label">일감 번호 <span style="font-weight:400;color:var(--text3);">(선택)</span></label>
+        <input class="form-input" id="f-rid" placeholder="예: 1052"></div>
+      <div class="form-row"><label class="form-label">제목 *</label>
+        <input class="form-input" id="f-rsubject" placeholder="예: 메인 배너 디자인 수정"></div>
+      <div class="form-row"><label class="form-label">담당자</label>
+        <input class="form-input" id="f-rassign" placeholder="예: 김민지"></div>
+      <div class="form-row"><label class="form-label">시작일</label>
+        <input class="form-input" type="date" id="f-rdate" value="${t}"></div>
+      <div class="form-row"><label class="form-label">상태</label>
+        <select class="form-input" id="f-rstatus">
+          <option>대기</option><option>신규</option><option>진행</option><option>수정완료</option>
+        </select></div>`;
+
+  } else if(mode==='redmine'){
+    document.getElementById('modal-title').textContent = '레드마인 API 설정';
+    document.getElementById('modal-body').innerHTML = `
+      <div class="rm-tip">
+        <i class="ti ti-info-circle"></i> <strong>사전 준비</strong><br>
+        레드마인 관리 → 설정 → API → "REST 웹 서비스 활성화" 체크<br>
+        내 계정 → 오른쪽 하단 "API 접근 키" 확인 후 아래에 입력해요
+      </div>
+      <div class="form-row"><label class="form-label">서버 주소</label>
+        <input class="form-input" id="f-rmurl" value="${rmConfig.url}" placeholder="http://10.30.100.24"></div>
+      <div class="form-row"><label class="form-label">API Key</label>
+        <input class="form-input" id="f-rmkey" value="${rmConfig.apiKey}" placeholder="레드마인 프로필 → API 접근 키" type="password"></div>
+      <div class="form-row"><label class="form-label">프로젝트 식별자</label>
+        <input class="form-input" id="f-rmproj" value="${rmConfig.projectId}" placeholder="hb_design"></div>
+      <div class="form-row"><label class="form-label">대기 상태명 <span style="font-weight:400;color:var(--text3);">(콤마로 구분)</span></label>
+        <input class="form-input" id="f-rmwait" value="${rmConfig.waitStatus}" placeholder="대기,신규"></div>
+      <div id="rm-test-msg" style="font-size:12px;margin-top:6px;min-height:18px;"></div>
+      <div style="margin-top:8px;">
+        <button class="btn sm teal" onclick="testApi()"><i class="ti ti-plug"></i> 연결 테스트</button>
+      </div>`;
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function saveModal(){
+  if(modalMode==='add' || modalMode==='edit'){
+    const name = document.getElementById('f-name').value.trim();
+    const open = document.getElementById('f-open').value;
+    if(!name||!open){ alert('프로젝트명과 오픈일은 필수예요.'); return; }
+    const g = id => document.getElementById(id)?.value || open;
+    const obj = {
+      name, open,
+      design:[g('f-ds'),g('f-de')], pub:[g('f-ps'),g('f-pe')],
+      dev:[g('f-devs'),g('f-deve')], test:[g('f-ts'),g('f-te')],
+      members: document.getElementById('f-members').value,
+      note: document.getElementById('f-note').value
+    };
+    if(modalMode==='add'){ obj.id=nextPid++; projects.push(obj); }
+    else{ const i=projects.findIndex(x=>x.id===editId); if(i>=0){obj.id=editId;projects[i]=obj;} }
+    showToast(modalMode==='add'?'프로젝트를 추가했어요':'프로젝트를 수정했어요');
+
+  } else if(modalMode==='redmine-manual'){
+    const subject = document.getElementById('f-rsubject').value.trim();
+    if(!subject){ alert('제목을 입력해주세요.'); return; }
+    const rid = parseInt(document.getElementById('f-rid').value) || Math.floor(Math.random()*900+1100);
+    rmIssues.unshift({
+      id: rid, subject,
+      status:{name: document.getElementById('f-rstatus').value},
+      assigned_to:{name: document.getElementById('f-rassign').value||'미배정'},
+      start_date: document.getElementById('f-rdate').value,
+      _manual: true
+    });
+    showToast('일감을 추가했어요');
+
+  } else if(modalMode==='redmine'){
+    rmConfig.url    = document.getElementById('f-rmurl').value.trim().replace(/\/$/,'');
+    rmConfig.apiKey = document.getElementById('f-rmkey').value.trim();
+    rmConfig.projectId = document.getElementById('f-rmproj').value.trim();
+    rmConfig.waitStatus = document.getElementById('f-rmwait').value.trim();
+    rmFetched = false;
+    showToast('API 설정을 저장했어요');
+  }
+
+  saveData();
+  closeModal();
+  renderDash();
+  if(modalMode==='redmine') fetchRedmine(false);
+}
+
+async function testApi(){
+  const url = document.getElementById('f-rmurl').value.trim().replace(/\/$/,'');
+  const key = document.getElementById('f-rmkey').value.trim();
+  const proj = document.getElementById('f-rmproj').value.trim();
+  const msg = document.getElementById('rm-test-msg');
+  msg.style.color='var(--text3)'; msg.textContent='연결 확인 중...';
+  try{
+    const r = await fetch(`${url}/projects/${proj}/issues.json?key=${key}&limit=1`);
+    if(r.ok){ msg.style.color='var(--green)'; msg.textContent='✓ 연결 성공! 저장 후 일감이 자동으로 불러와져요.'; }
+    else{ msg.style.color='var(--red)'; msg.textContent='✗ '+r.status+' — API Key 또는 프로젝트 ID를 확인해주세요.'; }
+  }catch(e){
+    msg.style.color='var(--red)';
+    msg.textContent='✗ 연결 실패. 사내 PC에서 열어야 내부망에 접속 가능해요.';
+  }
+}
+
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+// ── 지식지갑 ──
+const KW_CATS = [
+  {key:'all',label:'전체'},{key:'figma',label:'피그마 신기능'},
+  {key:'ai',label:'🤖 AI 뉴스'},{key:'front',label:'프론트엔드'},
+  {key:'design',label:'디자인'},{key:'trend',label:'트렌드'},
+  {key:'adobe',label:'어도비 신기능'},{key:'industry',label:'업계동향'},
+];
+const KW_DATA = [
+  {id:1,cat:'figma',catLabel:'피그마 신기능',title:'Figma AI 자동 레이아웃 기능 업데이트',
+   summary:'Figma가 AI 기반 자동 레이아웃 제안 기능을 강화해 디자이너의 반복 작업을 크게 줄여줄 것으로 기대된다.',
+   body:'Auto Layout을 AI가 자동으로 제안하는 기능 추가. 컴포넌트 배치 시 인접 요소와의 간격·정렬을 실시간 추천하며, 기존 디자인 시스템 토큰을 학습해 일관성을 유지한다. 반복 패턴을 감지해 컴포넌트 분리도 자동으로 제안한다.',
+   keywords:['Auto Layout','AI 제안','컴포넌트'],source:'Figma Blog',date:'2026.05.06',url:'https://figma.com'},
+  {id:2,cat:'ai',catLabel:'AI 뉴스',title:'Claude 4 Opus 코딩 능력 벤치마크 1위 달성',
+   summary:'Anthropic이 출시한 Claude 4 Opus가 SWE-bench에서 최고 성적을 기록하며 코딩 분야 AI 최강자로 부상했다.',
+   body:'SWE-bench Verified에서 72.5% 성공률 기록. 프론트엔드 컴포넌트 생성과 리팩토링에서 강점을 보여 디자인-개발 협업 워크플로에 큰 변화가 예상된다. 특히 CSS/JS 코드 생성 품질이 크게 향상됐다.',
+   keywords:['Claude','AI 코딩','벤치마크'],source:'Anthropic',date:'2026.05.05',url:'https://anthropic.com'},
+  {id:3,cat:'front',catLabel:'프론트엔드',title:'CSS Anchor Positioning 전 브라우저 지원 완료',
+   summary:'CSS Anchor Positioning API가 Chrome, Firefox, Safari 모두에서 정식 지원되며 JS 없는 툴팁 구현이 가능해졌다.',
+   body:'anchor-name과 position-anchor 속성으로 팝오버·드롭다운을 CSS만으로 배치 가능. 기존 JS 좌표 계산 작업이 불필요해져 성능과 접근성이 향상된다. Floating UI 같은 라이브러리 없이도 복잡한 팝업 UI 구현이 가능해졌다.',
+   keywords:['CSS','Anchor API','브라우저'],source:'MDN Web Docs',date:'2026.05.03',url:'https://developer.mozilla.org'},
+  {id:4,cat:'design',catLabel:'디자인',title:'Material Design 3 Expressive 발표',
+   summary:'Google이 Material Design의 새 버전 Expressive를 공개하며 감성적이고 역동적인 UI 언어를 선보였다.',
+   body:'M3 Expressive는 색상·형태·움직임을 통해 브랜드 개성을 강하게 표현. Spring 기반 물리 애니메이션과 Dynamic Color의 확장이 주목받고 있다. 한국어 포함 다국어 타이포그래피 지원도 강화됐다.',
+   keywords:['Material Design','Google','UI 시스템'],source:'Google Design',date:'2026.05.07',url:'https://m3.material.io'},
+  {id:5,cat:'trend',catLabel:'트렌드',title:'2026 UX 트렌드: 공간 인터페이스와 에이전트 UI',
+   summary:'AI 에이전트가 일상화되면서 공간형·대화형 인터페이스가 주류 트렌드로 부상하고 있다.',
+   body:'에이전트 UI, 공간 인터페이스(AR/VR), 적응형 UI 세 가지가 주요 트렌드. AI 에이전트가 작업하는 동안 사용자에게 상태를 투명하게 보여주는 디자인 패턴이 중요해졌다. 한국 기업들의 AI 인터페이스 투자도 빠르게 늘고 있다.',
+   keywords:['UX 트렌드','에이전트 UI','공간 인터페이스'],source:'NN/g',date:'2026.05.01',url:'https://nngroup.com'},
+  {id:6,cat:'adobe',catLabel:'어도비 신기능',title:'Adobe Firefly 4 — 벡터 생성 AI 정식 출시',
+   summary:'Adobe가 Firefly 4를 통해 텍스트로 SVG 벡터 아이콘과 일러스트를 생성하는 기능을 Illustrator에 통합했다.',
+   body:'상업적 사용이 안전한 학습 데이터 기반. Illustrator에서 프롬프트 입력 시 완전히 편집 가능한 SVG 패스로 생성. 기존 아트보드 스타일을 학습해 일관성을 유지한다. 한국어 프롬프트도 지원한다.',
+   keywords:['Firefly','벡터 AI','Illustrator'],source:'Adobe Blog',date:'2026.04.30',url:'https://adobe.com'},
+  {id:7,cat:'industry',catLabel:'업계동향',title:'국내 디자인 툴 시장 Figma 점유율 78% 돌파',
+   summary:'국내 UX/UI 디자이너 대상 조사에서 Figma 사용률이 78%를 넘어 사실상 표준 툴로 자리잡았다.',
+   body:'한국디자인진흥원 2026 실태조사 기준. Sketch는 5.2%로 급감, Adobe XD는 퇴장 수순. 팀 협업·컴포넌트·토큰 관리 기능이 선택 이유 1순위로 꼽혔다. 교육기관 디자인 커리큘럼도 Figma 중심으로 빠르게 재편되고 있다.',
+   keywords:['Figma','시장조사','디자인 툴'],source:'한국디자인진흥원',date:'2026.04.28',url:'#'},
+  {id:8,cat:'figma',catLabel:'피그마 신기능',title:'Figma Variables — 시맨틱 토큰 관리 업데이트',
+   summary:'Figma Variables에 시맨틱 토큰 계층 구조 지원이 추가돼 디자인 시스템 관리가 체계화됐다.',
+   body:'Primitive → Semantic → Component 3계층 토큰 구조를 Figma 내에서 직접 관리 가능. 토큰 간 참조 관계 시각화, 다크모드 토큰 매핑도 Variables 패널에서 확인 가능하다. 코드 내보내기 시 CSS 변수로도 자동 변환된다.',
+   keywords:['Variables','디자인 토큰','시스템'],source:'Figma',date:'2026.04.25',url:'https://figma.com'},
+];
+
+let kwFilter = 'all';
+function renderKnowledge(){
+  document.getElementById('kw-filter').innerHTML = KW_CATS.map(c=>
+    `<button class="kw-chip ${kwFilter===c.key?'active':''}" onclick="setKwFilter('${c.key}')">${c.label}</button>`
+  ).join('');
+  renderKwGrid();
+}
+function setKwFilter(k){ kwFilter=k; document.getElementById('kw-detail-area').innerHTML=''; renderKnowledge(); }
+function renderKwGrid(){
+  const items = kwFilter==='all' ? KW_DATA : KW_DATA.filter(d=>d.cat===kwFilter);
+  document.getElementById('kw-grid-area').innerHTML = `<div class="news-grid">${items.map(d=>`
+    <div class="news-card" onclick="showKwDetail(${d.id})">
+      <span class="news-cat cat-${d.cat}">${d.catLabel}</span>
+      <div class="news-title">${d.title}</div>
+      <div class="news-summary">${d.summary}</div>
+      <div class="news-meta"><span>${d.source}</span><span>${d.date}</span></div>
+    </div>`).join('')}</div>`;
+}
+function showKwDetail(id){
+  const d = KW_DATA.find(x=>x.id===id); if(!d) return;
+  document.getElementById('kw-detail-area').innerHTML = `
+    <div class="kw-detail-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span class="news-cat cat-${d.cat}">${d.catLabel}</span>
+        <button class="btn sm" onclick="document.getElementById('kw-detail-area').innerHTML=''"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="font-size:18px;font-weight:700;line-height:1.45;margin-bottom:6px;">${d.title}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">${d.source} · ${d.date}</div>
+      <div class="kw-section-label">핵심 요약</div>
+      <div class="kw-body">${d.summary}</div>
+      <div class="kw-section-label">상세 내용</div>
+      <div class="kw-body">${d.body}</div>
+      <div class="kw-section-label">관련 키워드</div>
+      <div style="margin-top:4px;">${d.keywords.map(k=>`<span class="tag">${k}</span>`).join('')}</div>
+      <div style="margin-top:16px;display:flex;gap:8px;">
+        <a href="${d.url}" target="_blank" class="btn sm primary"><i class="ti ti-external-link"></i> 원문 보기</a>
+        <button class="btn sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${d.url}').then(()=>showToast('링크를 복사했어요'))">
+          <i class="ti ti-link"></i> 링크 복사
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('kw-detail-area').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+
+// ── 지식지갑 원본 로직 ──
+const KW_CAT_LABEL = { figma:'피그마 신기능', adobe:'어도비 신기능', ai:'🤖 AI 뉴스', industry:'업계동향', design:'디자인', trend:'트렌드', frontend:'프론트엔드' };
+const KW_CAT_COLOR = { figma:'#3a7d44', adobe:'#b84c1a', ai:'#c2185b', industry:'#7b3fa0', design:'#1a5fa0', trend:'#a06020', frontend:'#1a7a7a' };
+let kwAllCards=[], kwCurrentFilter='all', kwLoaded=false;
+
+async function kwLoadNews(){
+  const grid=document.getElementById('kwCardGrid');
+  grid.innerHTML='<div class="kw-loading-state"><div class="kw-dots"><span></span><span></span><span></span></div><p style="margin-top:14px;">뉴스를 불러오는 중이에요</p></div>';
+  try{
+    const res=await fetch('news.json?t='+Date.now());
+    if(!res.ok) throw new Error('no file');
+    const data=await res.json();
+    kwAllCards=data.articles||[];
+    document.getElementById('kwUpdateTime').textContent=data.updated?'업데이트 '+data.updated:'';
+  }catch{
+    kwAllCards=kwGetSampleData();
+    document.getElementById('kwUpdateTime').textContent='샘플 데이터';
+  }
+  kwRenderCards();
+}
+
+function kwRenderCards(){
+  const grid=document.getElementById('kwCardGrid');
+  const filtered=kwCurrentFilter==='all'?kwAllCards:kwAllCards.filter(c=>c.category===kwCurrentFilter);
+  const list=[...filtered].sort((a,b)=>{const da=a.publishedAt||a.collectedAt||'',db=b.publishedAt||b.collectedAt||'';return db.localeCompare(da);});
+  document.getElementById('kwCardCount').textContent=list.length+'개';
+  if(!list.length){grid.innerHTML='<div class="kw-loading-state" style="color:#ccc;">해당 분야의 뉴스가 없어요</div>';return;}
+  grid.innerHTML=list.map((card,i)=>{
+    const idx=kwAllCards.indexOf(card);
+    return '<article class="kw-news-card kw-card-'+card.category+'" style="animation-delay:'+(i*.04)+'s" onclick="kwOpenModal('+idx+')">'
+      +'<div class="kw-card-accent"></div>'
+      +'<div class="kw-card-body">'
+      +'<div class="kw-card-top"><span class="kw-cat-chip kw-chip-'+card.category+'">'+(KW_CAT_LABEL[card.category]||card.category)+'</span>'
+      +'<span class="kw-card-date">'+card.date+'</span></div>'
+      +'<p class="kw-card-title">'+card.title+'</p>'
+      +'<p class="kw-card-summary">'+card.summary+'</p>'
+      +'<div class="kw-card-keywords">'+(card.keywords||[]).map(k=>'<span class="kw-kw-tag"># '+k+'</span>').join('')+'</div>'
+      +'<div class="kw-card-footer"><span class="kw-card-source">'+card.source+'</span>'
+      +'<span class="kw-card-link">자세히 보기 →</span></div></div></article>';
+  }).join('');
+}
+
+function kwSetFilter(cat,btn){
+  kwCurrentFilter=cat;
+  document.querySelectorAll('.kw-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  kwRenderCards();
+}
+
+function kwOpenModal(idx){
+  const card=kwAllCards[idx];
+  const col=KW_CAT_COLOR[card.category]||'#888';
+  document.getElementById('kwModalAccent').style.background=col;
+  document.getElementById('kwModalSourceDot').style.background=col;
+  document.getElementById('kwModalChip').textContent=KW_CAT_LABEL[card.category]||card.category;
+  document.getElementById('kwModalChip').className='kw-cat-chip kw-chip-'+card.category;
+  document.getElementById('kwModalDate').textContent=card.date;
+  document.getElementById('kwModalTitle').textContent=card.title;
+  document.getElementById('kwModalSource').textContent=card.source;
+  document.getElementById('kwModalLink').href=card.url||'#';
+  document.getElementById('kwModalSummary').textContent=card.summary||'';
+  const full=card.summary_full||card.summary||'';
+  const sentences=full.split(/(?<=[.!?])\s+/).filter(s=>s.trim().length>5);
+  document.getElementById('kwModalPoints').innerHTML=sentences.map(s=>
+    '<li><span class="kw-modal-point-dot" style="background:'+col+';opacity:.5;"></span><span>'+s.trim()+'</span></li>'
+  ).join('')||'<li><span class="kw-modal-point-dot" style="background:'+col+';opacity:.5;"></span><span>'+full+'</span></li>';
+  document.getElementById('kwModalKeywords').innerHTML=(card.keywords||[]).map(k=>'<span class="kw-modal-kw-tag"># '+k+'</span>').join('');
+  window._kwCurrentUrl=card.url||location.href;
+  document.getElementById('kwModalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function kwCloseModal(e){if(e.target===document.getElementById('kwModalOverlay'))kwCloseModalDirect();}
+function kwCloseModalDirect(){document.getElementById('kwModalOverlay').classList.remove('open');document.body.style.overflow='';}
+function kwCopyLink(){
+  navigator.clipboard.writeText(window._kwCurrentUrl||location.href).then(()=>{
+    const btn=document.querySelector('.kw-modal-share-btn');
+    const orig=btn.textContent; btn.textContent='✅ 복사됐어요!';
+    setTimeout(()=>btn.textContent=orig,2000);
+  });
+}
+
+function kwGetSampleData(){
+  const today=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+  const tag=new Date().toISOString().slice(0,10);
+  return[
+    {category:'figma',title:'Figma AI 레이아웃 자동 제안 기능 출시',summary:'반복 정렬 작업을 AI가 자동으로 처리해주는 기능이 추가됐습니다.',summary_full:'반복 정렬 작업을 AI가 자동으로 처리해주는 기능이 추가됐습니다. 오토레이아웃 설정을 AI가 자동 감지해 적용하며, 컴포넌트 자동 정렬과 스타일 일관성 검사 기능도 포함됩니다.',keywords:['Figma','AI','오토레이아웃'],source:'Figma Release Notes',date:today,url:'https://figma.com/release-notes',collectedAt:tag},
+    {category:'adobe',title:'Firefly 4 벡터 생성 기능 대폭 강화',summary:'AI 기반 벡터 일러스트 생성 품질이 크게 개선됐습니다.',summary_full:'텍스트 프롬프트로 SVG 경로를 직접 생성하는 기능은 아이콘 제작 워크플로우를 완전히 바꿀 것으로 보입니다.',keywords:['Adobe','Firefly','벡터AI'],source:'Adobe',date:today,url:'https://helpx.adobe.com/firefly',collectedAt:tag},
+    {category:'ai',title:'Claude 4, 디자인 보조 능력 대폭 강화',summary:'Claude 4가 UI 설명과 코드 생성 능력을 대폭 향상시켰습니다.',summary_full:'Anthropic의 Claude 4가 코드 생성, UI 설명, 접근성 감사 등 디자이너 관련 작업 지원 능력을 대폭 향상시켰습니다.',keywords:['Claude','AI보조','디자인'],source:'Anthropic',date:today,url:'https://anthropic.com',collectedAt:tag},
+    {category:'frontend',title:'CSS Grid subgrid 전 브라우저 지원',summary:'CSS Grid의 subgrid 기능이 주요 브라우저 전체에서 지원됩니다.',summary_full:'기존 JavaScript로 처리하던 정렬 문제를 순수 CSS로 해결할 수 있어 성능 개선에도 도움이 됩니다.',keywords:['CSS','Grid','브라우저'],source:'CSS-Tricks',date:today,url:'https://css-tricks.com',collectedAt:tag},
+    {category:'design',title:'Material Design 3 Expressive 발표',summary:'Google이 M3 Expressive를 공개하며 역동적인 UI 언어를 선보였다.',summary_full:'Spring 기반 물리 애니메이션과 Dynamic Color의 확장이 주목받고 있습니다.',keywords:['Material Design','Google','UI'],source:'Google Design',date:today,url:'https://m3.material.io',collectedAt:tag},
+    {category:'trend',title:'2026 UX: 에이전트 UI와 공간 인터페이스',summary:'AI 에이전트가 일상화되면서 공간형 인터페이스가 주류 트렌드로 부상하고 있다.',summary_full:'에이전트 UI, 공간 인터페이스, 적응형 UI 세 가지가 주요 트렌드입니다.',keywords:['UX','에이전트','트렌드'],source:'NN/g',date:today,url:'https://nngroup.com',collectedAt:tag},
+    {category:'industry',title:'Figma 국내 점유율 78% 돌파',summary:'국내 UI/UX 디자이너 대상 조사에서 Figma 사용률이 78%를 넘었다.',summary_full:'한국디자인진흥원 2026 실태조사 기준. Sketch와 Adobe XD는 급감 추세입니다.',keywords:['Figma','시장','디자인툴'],source:'한국디자인진흥원',date:today,url:'#',collectedAt:tag},
+  ];
+}
+
+// ── 키보드 단축키 ──
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){closeModal();kwCloseModalDirect();}
+});
+
+// ── 초기화 ──
+renderDash();
+// API Key가 있으면 자동으로 레드마인 불러오기
+if(rmConfig.apiKey) fetchRedmine(false);
+</script>
+</body>
+</html>
