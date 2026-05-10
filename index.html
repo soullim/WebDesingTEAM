@@ -305,7 +305,10 @@ html,body{font-family:var(--font);font-size:15px;background:var(--bg);color:var(
   <div class="kwtop">
     <div class="kwtopin">
       <span class="kwupd" id="kwupd"></span>
-      <button class="kwrefresh" onclick="kwLoad()">↻ 새로고침</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="kwrefresh" onclick="kwLoad()">↻ 새로고침</button>
+        <button class="kwrefresh" onclick="kwClearStorage()" style="color:var(--text3);font-size:13px;border-color:var(--border)">초기화</button>
+      </div>
     </div>
   </div>
   <div class="kwfbar">
@@ -775,27 +778,81 @@ function rmMSave(){
 var KW_LABEL={figma:'피그마 신기능',adobe:'어도비 신기능',ai:'🤖 AI 뉴스',industry:'업계동향',design:'디자인',trend:'트렌드',frontend:'프론트엔드'};
 var KW_COLOR={figma:'#3a7d44',adobe:'#b84c1a',ai:'#c2185b',industry:'#7b3fa0',design:'#1a5fa0',trend:'#a06020',frontend:'#1a7a7a'};
 var kwCards=[], kwCurFilter='all';
+var LS_KW='wd_kw_articles'; // 누적 기사 저장 키
+
+// 로컬스토리지에서 누적 기사 불러오기
+function kwLsLoad(){
+  try{
+    var s=localStorage.getItem(LS_KW);
+    if(s) kwCards=JSON.parse(s);
+  }catch(e){}
+}
+
+// 새 기사를 기존 누적 데이터에 병합 (title 기준 중복 제거, 최신 유지)
+function kwMerge(newArticles){
+  var map={};
+  // 기존 데이터 먼저 맵에 등록
+  kwCards.forEach(function(a){ map[a.title]=a; });
+  // 새 데이터로 덮어쓰기 (최신 내용 우선)
+  newArticles.forEach(function(a){ map[a.title]=a; });
+  // collectedAt 기준 최신순 정렬
+  kwCards=Object.values(map).sort(function(a,b){
+    var da=a.publishedAt||a.collectedAt||a.date||'';
+    var db=b.publishedAt||b.collectedAt||b.date||'';
+    return db.localeCompare(da);
+  });
+  try{ localStorage.setItem(LS_KW, JSON.stringify(kwCards)); }catch(e){}
+}
+
+// 누적 기사 초기화
+function kwClearStorage(){
+  if(!confirm('저장된 모든 지식지갑 기사를 초기화할까요?\n삭제 후 새로고침 시 최신 데이터만 표시돼요.')) return;
+  localStorage.removeItem(LS_KW);
+  kwCards=[];
+  kwLoad();
+  toast('지식지갑 기사를 초기화했어요');
+}
 
 async function kwLoad(){
-  document.getElementById('kwgrid').innerHTML='<div class="kwloading"><div class="dots"><span></span><span></span><span></span></div><p style="margin-top:14px">뉴스를 불러오는 중이에요</p></div>';
+  // 기존 누적 데이터 먼저 표시 (빠른 렌더링)
+  kwLsLoad();
+  if(kwCards.length>0){
+    kwRender();
+    document.getElementById('kwupd').textContent='불러오는 중...';
+  } else {
+    document.getElementById('kwgrid').innerHTML='<div class="kwloading"><div class="dots"><span></span><span></span><span></span></div><p style="margin-top:14px">뉴스를 불러오는 중이에요</p></div>';
+  }
+
+  // 새 데이터 fetch 후 누적 병합
   var sources=[
     'news.json?t='+Date.now(),
     'https://soullim.github.io/knowledge-wallet/news.json?t='+Date.now()
   ];
-  var loaded=false;
+  var fetched=false;
   for(var i=0;i<sources.length;i++){
     try{
       var res=await fetch(sources[i]);
       if(!res.ok) continue;
       var data=await res.json();
-      if((data.articles||[]).length>0){
-        kwCards=data.articles;
-        document.getElementById('kwupd').textContent=data.updated?'업데이트 '+data.updated:'';
-        loaded=true; break;
+      var articles=data.articles||[];
+      if(articles.length>0){
+        kwMerge(articles); // 누적 병합
+        var now=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
+        document.getElementById('kwupd').textContent='마지막 업데이트: '+now+' · 총 '+kwCards.length+'개';
+        fetched=true; break;
       }
     }catch(e){ continue; }
   }
-  if(!loaded){ kwCards=kwSample(); document.getElementById('kwupd').textContent='샘플 데이터'; }
+
+  if(!fetched){
+    // fetch 실패 시 누적 데이터 그대로 유지, 없으면 샘플
+    if(kwCards.length===0){
+      kwCards=kwSample();
+      document.getElementById('kwupd').textContent='샘플 데이터 (연결 실패)';
+    } else {
+      document.getElementById('kwupd').textContent='오프라인 · 누적 '+kwCards.length+'개';
+    }
+  }
   kwRender();
 }
 
